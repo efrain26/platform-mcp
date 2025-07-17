@@ -1,0 +1,17 @@
+[versions]
+ktorVersion = "3.1.1"
+mcpVersion = "0.4.0"
+guava = "33.4.5-jre"
+slf4jVersion = "2.0.9"
+
+[libraries]
+ktor-client-content-negotiation =  { module = "io.ktor:ktor-client-content-negotiation ", version.ref = "ktorVersion"}
+ktor-serialization-kotlinx =  { module = "io.ktor:ktor-serialization-kotlinx-json ", version.ref = "ktorVersion"}
+modelcontextprotocol =  { module = "io.modelcontextprotocol:kotlin-sdk", version.ref = "mcpVersion" }
+slf4j =  { module = "org.slf4j:slf4j-nop ", version.ref = "slf4jVersion"}
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.1.20" }
+com-github-johnrengelman =  { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
+
