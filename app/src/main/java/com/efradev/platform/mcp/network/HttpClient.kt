@@ -14,3 +14,13 @@ val httpClientPlatformApi = HttpClient {
         }
     }
 }
+
+const val URL_LIST = "https://platform-lists-production.up.railway.app/"
+val httpClientPlatformListApi = HttpClient {
+    defaultRequest {
+        url(URL_LIST)
+        headers {
+            append("content-type", "application/json")
+        }
+    }
+}

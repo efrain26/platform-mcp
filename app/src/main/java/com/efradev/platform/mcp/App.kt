@@ -2,6 +2,7 @@ package com.efradev.platform.mcp
 
 import com.efradev.platform.mcp.network.getPlatformApi
 import com.efradev.platform.mcp.network.httpClientPlatformApi
+import com.efradev.platform.mcp.network.httpClientPlatformListApi
 import io.ktor.utils.io.streams.asInput
 import io.modelcontextprotocol.kotlin.sdk.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.Implementation
@@ -14,6 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.runBlocking
 import kotlinx.io.asSink
 import kotlinx.io.buffered
+import java.io.File
 
 fun main() = run()
 /**
@@ -28,7 +30,7 @@ fun run() {
     // Create the MCP Server instance with a basic implementation
     val server = Server(
         Implementation(
-            name = "efrainMCP", // Tool name is "weather"
+            name = "platform-tools", // Tool name is "weather"
             version = "1.0.0" // Version of the implementation
         ),
         ServerOptions(
@@ -43,15 +45,56 @@ fun run() {
     )
 
     server.addTool(
-        name = "FastAPI Documentation Context for ToDoList App",
+        name = "Auth Microservice - FastAPI Documentation",
         description = """
-            URL para validar los endpoints que se estan trabajando para el proyecto ToDoList,
-            aqui podemos checar que Api's existen y cuales son los header que se ocupan o los modelos.
+            Consulta json de los servicios de Auth en fastAPI
         """.trimIndent(),
 
         ) { request ->
         val forecast = httpClientPlatformApi.getPlatformApi()
         CallToolResult(content = listOf(TextContent(forecast.toString())))
+    }
+
+    server.addTool(
+        name = "Lists Microservice - FastAPI Documentation",
+        description = """
+            Consulta json de los servicios de Lists en fastAPI
+        """.trimIndent(),
+
+        ) { request ->
+        val forecast = httpClientPlatformListApi.getPlatformApi()
+        CallToolResult(content = listOf(TextContent(forecast.toString())))
+    }
+
+    server.addTool(
+        name = "Workflow to generate a backend ticket",
+        description = """
+            Consultar la documentacion para saber el workflow de backend de como generar un ticket 
+            con ayuda de la IA, tambien puede consultar el template del ticket de backend.
+            Retorna el contenido del WORKFLOW.md y TEMPLATE-TICKET.md para guiar la creacion de tickets.
+        """.trimIndent(),
+
+        ) { request ->
+        try {
+            val workflowContent = File("files/WORKFLOW.md").readText()
+            val templateContent = File("files/TEMPLATE-TICKET.md").readText()
+            
+            val combinedContent = """
+                ## 📋 WORKFLOW DE TICKETS
+                
+                $workflowContent
+                
+                ---
+                
+                ## 📝 TEMPLATE DE TICKET
+                
+                $templateContent
+            """.trimIndent()
+            
+            CallToolResult(content = listOf(TextContent(combinedContent)))
+        } catch (e: Exception) {
+            CallToolResult(content = listOf(TextContent("Error al leer los archivos de documentación: ${e.message}")))
+        }
     }
 
     runBlocking {
